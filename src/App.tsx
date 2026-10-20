@@ -76,9 +76,12 @@ function App() {
   const [isSaving, setIsSaving] = useState(false)
   const [musicPlaying, setMusicPlaying] = useState(false)
   const [autoplayBlocked, setAutoplayBlocked] = useState(false)
+  const [videoPlaying, setVideoPlaying] = useState(false)
   const [musicVolume, setMusicVolume] = useState(0.35)
   const audioRef = useRef<HTMLAudioElement>(null)
   const musicEnabledRef = useRef(true)
+  const activeVideosRef = useRef(new Set<HTMLVideoElement>())
+  const resumeMusicAfterVideoRef = useRef(false)
   const musicVolumeRef = useRef(0.35)
   const fileInput = useRef<HTMLInputElement>(null)
   const photoUrls = useRef<string[]>([])
@@ -100,7 +103,7 @@ function App() {
   const startMusic = () => {
     const audio = audioRef.current
     musicEnabledRef.current = true
-    if (!audio) return
+    if (!audio || activeVideosRef.current.size > 0) return
     audio.volume = musicVolumeRef.current
     void audio.play()
       .then(() => {
@@ -133,12 +136,33 @@ function App() {
     if (audioRef.current) audioRef.current.volume = volume
   }
 
+  const pauseMusicForVideo = (video: HTMLVideoElement) => {
+    const activeVideos = activeVideosRef.current
+    if (activeVideos.size === 0) {
+      resumeMusicAfterVideoRef.current = musicEnabledRef.current
+    }
+    activeVideos.add(video)
+    setVideoPlaying(true)
+    audioRef.current?.pause()
+  }
+
+  const resumeMusicAfterVideo = (video: HTMLVideoElement) => {
+    const activeVideos = activeVideosRef.current
+    activeVideos.delete(video)
+    if (activeVideos.size > 0) return
+
+    setVideoPlaying(false)
+    const shouldResume = resumeMusicAfterVideoRef.current && musicEnabledRef.current
+    resumeMusicAfterVideoRef.current = false
+    if (shouldResume) startMusic()
+  }
+
   useEffect(() => {
     const audio = audioRef.current
     if (!audio) return
     audio.volume = musicVolumeRef.current
     const tryAutoplay = () => {
-      if (!musicEnabledRef.current) return
+      if (!musicEnabledRef.current || activeVideosRef.current.size > 0) return
       audio.volume = musicVolumeRef.current
       void audio.play()
         .then(() => {
@@ -401,7 +425,15 @@ function App() {
             </motion.article>
             <motion.article className="photo-card photo-video-card">
               <div className="paired-video-preview">
-                <video controls playsInline preload="none" poster="/media/anh-nguyet/video-18-10-poster.webp">
+                <video
+                  controls
+                  playsInline
+                  preload="none"
+                  poster="/media/anh-nguyet/video-18-10-poster.webp"
+                  onPlay={(event) => pauseMusicForVideo(event.currentTarget)}
+                  onEnded={(event) => resumeMusicAfterVideo(event.currentTarget)}
+                  onError={(event) => resumeMusicAfterVideo(event.currentTarget)}
+                >
                   <source src={october18Video.src} type="video/mp4" />
                   Trình duyệt của bạn không hỗ trợ phát video này.
                 </video>
@@ -427,7 +459,15 @@ function App() {
         </div>
         {content.media.filter((item) => item.type === 'video' && item.caption !== '18/10').map((video) => (
           <motion.article className="video-card" key={video.src} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: 0.2 }} transition={{ duration: 0.55 }}>
-            <video controls playsInline preload="none" poster="/media/anh-nguyet/video-20-10-poster.webp">
+            <video
+              controls
+              playsInline
+              preload="none"
+              poster="/media/anh-nguyet/video-20-10-poster.webp"
+              onPlay={(event) => pauseMusicForVideo(event.currentTarget)}
+              onEnded={(event) => resumeMusicAfterVideo(event.currentTarget)}
+              onError={(event) => resumeMusicAfterVideo(event.currentTarget)}
+            >
               <source src={video.src} type="video/mp4" />
               Trình duyệt của bạn không hỗ trợ phát video này.
             </video>
@@ -483,9 +523,9 @@ function App() {
         onPause={() => setMusicPlaying(false)}
       />
       <aside className={`music-widget ${musicPlaying && musicVolume > 0 ? 'is-playing' : ''}`} aria-label="Điều khiển nhạc nền">
-        <button className="music-toggle" type="button" onClick={toggleMusic} aria-pressed={musicPlaying}>
+        <button className="music-toggle" type="button" onClick={toggleMusic} aria-pressed={musicPlaying} disabled={videoPlaying}>
           <span className="music-visualizer" aria-hidden="true"><i /><i /><i /><i /></span>
-          <span>{musicPlaying ? 'Đang phát nhạc' : autoplayBlocked ? 'Chạm để bật nhạc' : 'Đang mở nhạc nền'}</span>
+          <span>{musicPlaying ? 'Đang phát nhạc' : videoPlaying ? 'Nhạc tạm dừng đến hết video' : autoplayBlocked ? 'Chạm để bật nhạc' : 'Đang mở nhạc nền'}</span>
           {musicPlaying ? <Pause size={14} /> : <Music2 size={14} />}
         </button>
         <label className="music-volume-row">
