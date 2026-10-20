@@ -239,17 +239,14 @@ function App() {
         </div>
 
         <div className="hero-showcase" onPointerMove={tiltShowcase} onPointerLeave={resetShowcaseTilt}>
-          <div className="hero-orbit hero-orbit-back" aria-hidden="true"><span /></div>
-          <div className="hero-orbit hero-orbit-front" aria-hidden="true"><span /></div>
-          <span className="hero-sparkle hero-sparkle-one" aria-hidden="true"><Sparkles size={19} /></span>
-          <span className="hero-sparkle hero-sparkle-two" aria-hidden="true"><Heart size={13} fill="currentColor" /></span>
-          <span className="hero-sparkle hero-sparkle-three" aria-hidden="true"><Sparkles size={14} /></span>
-          <motion.div className="hero-photo-shell" initial={{ opacity: 0, y: 24, scale: 0.94, rotateY: -22, rotateX: 9 }} animate={{ opacity: 1, y: 0, scale: 1, rotateY: 0, rotateX: 0 }} transition={{ duration: 1.1, ease: [0.22, 1, 0.36, 1], delay: 0.18 }}>
-            <div className="hero-photo-frame">
-              <img src={content.coverImage} alt={`Ảnh của ${content.recipient}`} fetchPriority="high" />
-              <div className="hero-photo-shade" />
-              <span className="hero-edition">ALBUM 20/10</span>
-              <div className="hero-photo-caption"><span>20/10</span><strong>{content.recipient}</strong></div>
+          <motion.div className="hero-photo-shell" initial={{ opacity: 0, y: 24, scale: 0.94, rotateY: -32, rotateX: 10 }} animate={{ opacity: 1, y: [0, -7, 0], scale: 1, rotateY: [0, -8, 0, 8, 0], rotateX: [0, 3.5, 0, -3.5, 0] }} transition={{ opacity: { duration: 0.8, delay: 0.18 }, scale: { duration: 1.1, delay: 0.18, ease: [0.22, 1, 0.36, 1] }, y: { duration: 6, repeat: Infinity, ease: 'easeInOut' }, rotateY: { duration: 12, repeat: Infinity, ease: 'easeInOut' }, rotateX: { duration: 12, repeat: Infinity, ease: 'easeInOut' } }}>
+            <div className="hero-photo-tilt">
+              <div className="hero-photo-frame">
+                <img src={content.coverImage} alt={`Ảnh của ${content.recipient}`} fetchPriority="high" />
+                <div className="hero-photo-shade" />
+                <span className="hero-edition">ALBUM 20/10</span>
+                <div className="hero-photo-caption"><span>20/10</span><strong>{content.recipient}</strong></div>
+              </div>
             </div>
           </motion.div>
           <motion.div className="hero-photo-count" initial={{ opacity: 0, scale: 0.7 }} animate={{ opacity: 1, scale: 1, y: [0, -5, 0] }} transition={{ opacity: { delay: 0.65, duration: 0.45 }, scale: { delay: 0.65, duration: 0.45 }, y: { delay: 1.2, duration: 4, repeat: Infinity, ease: 'easeInOut' } }}><span>ẢNH</span><strong>{String(content.media.filter((item) => item.type === 'image').length).padStart(2, '0')}</strong></motion.div>
