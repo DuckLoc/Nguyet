@@ -323,9 +323,11 @@ function App() {
           <motion.div className="hero-photo-shell" initial={{ opacity: 0, y: 24, scale: 0.94 }} animate={{ opacity: 1, y: [0, -7, 0], scale: 1 }} transition={{ opacity: { duration: 0.8, delay: 0.18 }, scale: { duration: 1.1, delay: 0.18, ease: [0.22, 1, 0.36, 1] }, y: { duration: 6, repeat: Infinity, ease: 'easeInOut' } }}>
             <motion.div className="hero-photo-tilt" animate={{ rotateY: [0, -7, 0, 7, 0], rotateX: [0, 2.5, 0, -2.5, 0], z: 28 }} transition={{ rotateY: { duration: 12, repeat: Infinity, ease: 'easeInOut' }, rotateX: { duration: 12, repeat: Infinity, ease: 'easeInOut' } }}>
               <div className="hero-photo-frame">
-                <img className="hero-photo-base" src={content.coverImage} alt={`Ảnh của ${content.recipient}`} fetchPriority="high" />
-                <div className="hero-photo-shade" />
-                <span className="hero-depth-clock" aria-hidden="true">20:10</span>
+                <div className="hero-photo-background">
+                  <img className="hero-photo-base" src={content.coverImage} alt={`Ảnh của ${content.recipient}`} fetchPriority="high" />
+                  <div className="hero-photo-shade" />
+                  <span className="hero-depth-clock" aria-hidden="true">20:10</span>
+                </div>
                 <img className="hero-photo-subject" src="/media/anh-nguyet/IMG_20260929_203620-depth-subject.png" alt="" aria-hidden="true" draggable={false} />
               </div>
             </motion.div>
