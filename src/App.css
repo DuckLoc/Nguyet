@@ -39,7 +39,7 @@ main { overflow: hidden; }
 .hero-photo-count span { font-size: 7px; letter-spacing: .16em; }
 .hero-photo-count strong { color: var(--wine); font-family: var(--serif); font-size: 25px; font-weight: 400; line-height: 1.2; }
 .hero-side-note { position: absolute; z-index: 13; top: 128px; right: -11px; display: flex; align-items: center; gap: 9px; color: var(--rose-dark); font-family: var(--serif); font-size: 11px; font-style: italic; line-height: 1.5; perspective: 600px; transform: translateZ(88px); transform-style: preserve-3d; }
-.hero-side-note-card { display: flex; align-items: center; gap: 9px; padding: 10px 12px; border: 1px solid #ffffffb8; background: #fffaf6dc; box-shadow: 0 12px 28px #55343e17; backdrop-filter: blur(10px); transform: rotateY(-12deg) rotateX(4deg); }
+.hero-side-note-card { display: flex; align-items: center; gap: 9px; padding: 11px 15px; border: 1px solid #ffffffd4; border-radius: 20px; background: #fffaf6e8; box-shadow: 0 14px 32px #55343e1c; backdrop-filter: blur(12px); transform: rotateY(-12deg) rotateX(4deg); }
 .hero-bottom { position: absolute; bottom: 0; left: 0; width: 100%; min-height: 42px; display: flex; align-items: center; justify-content: center; gap: 14px; border-top: 1px solid #eadbd3; color: #a69086; font-size: 8px; letter-spacing: .19em; }
 .hero-bottom-heart { color: #cf8288; font-size: 8px; }
 .hero-bottom-count { position: absolute; right: max(6.5vw, 28px); letter-spacing: .08em; }
