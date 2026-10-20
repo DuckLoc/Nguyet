@@ -22,14 +22,14 @@ main { overflow: hidden; }
 .hero-showcase { position: relative; justify-self: center; width: min(100%, 435px); height: 535px; perspective: 1200px; transform-style: preserve-3d; }
 .hero-photo-shell { position: absolute; z-index: 2; inset: 4px 38px 10px 28px; transform-style: preserve-3d; pointer-events: none; }
 .hero-photo-tilt { position: absolute; inset: 0; transform: rotateX(calc(5deg + var(--showcase-tilt-x, 0deg))) rotateY(calc(-10deg + var(--showcase-tilt-y, 0deg))) translateZ(28px); transform-style: preserve-3d; transition: transform .35s cubic-bezier(.2,.7,.2,1); will-change: transform; }
-.hero-photo-frame { position: absolute; inset: 0; overflow: hidden; border: 7px solid #fffdfb; border-radius: 190px 190px 8px 8px; background: #eadbd2; box-shadow: 0 38px 72px #55343e2b, 0 7px 18px #55343e1c; transition: box-shadow .35s; }
-.hero-photo-frame::after { position: absolute; inset: 0; border-radius: inherit; background: linear-gradient(125deg, #fff3 0%, transparent 32%, transparent 69%, #f8d5c117 100%); content: ''; pointer-events: none; }
-.hero-photo-frame img { width: 100%; height: 100%; object-fit: cover; object-position: center 39%; transition: transform .7s cubic-bezier(.2,.7,.2,1); }
+.hero-photo-frame { position: absolute; inset: 0; isolation: isolate; overflow: hidden; border: 7px solid #fffdfb; border-radius: 190px 190px 8px 8px; background: #eadbd2; box-shadow: 0 38px 72px #55343e2b, 0 7px 18px #55343e1c; transition: box-shadow .35s; }
+.hero-photo-frame::after { position: absolute; z-index: 2; inset: 0; border-radius: inherit; background: linear-gradient(125deg, #fff3 0%, transparent 32%, transparent 69%, #f8d5c117 100%); content: ''; pointer-events: none; }
+.hero-photo-frame img { position: relative; z-index: 0; display: block; width: 100%; height: 100%; object-fit: cover; object-position: center 39%; transition: transform .7s cubic-bezier(.2,.7,.2,1); }
 .hero-showcase:hover .hero-photo-frame { box-shadow: 0 44px 82px #55343e30, 0 8px 20px #55343e22; }
 .hero-showcase:hover .hero-photo-frame img { transform: scale(1.055); }
-.hero-photo-shade { position: absolute; inset: 35% 0 0; background: linear-gradient(transparent, #27181b99); }
-.hero-edition { position: absolute; top: 26px; left: 50%; padding: 8px 11px; border: 1px solid #ffffff94; border-radius: 20px; color: white; font-size: 8px; letter-spacing: .16em; transform: translateX(-50%); white-space: nowrap; }
-.hero-photo-caption { position: absolute; right: 22px; bottom: 24px; left: 22px; display: flex; flex-direction: column; gap: 5px; color: white; }
+.hero-photo-shade { position: absolute; z-index: 1; inset: 35% 0 0; background: linear-gradient(transparent, #27181b99); pointer-events: none; }
+.hero-edition { position: absolute; z-index: 3; top: 26px; left: 50%; padding: 8px 11px; border: 1px solid #ffffffb0; border-radius: 20px; color: white; font-size: 8px; letter-spacing: .16em; text-shadow: 0 1px 5px #27181bb3; transform: translateX(-50%); white-space: nowrap; }
+.hero-photo-caption { position: absolute; z-index: 3; right: 22px; bottom: 24px; left: 22px; display: flex; flex-direction: column; gap: 5px; color: white; text-shadow: 0 1px 8px #27181bcc; }
 .hero-photo-caption span { font-size: 8px; letter-spacing: .2em; }
 .hero-photo-caption strong { font-family: var(--serif); font-size: 27px; font-weight: 400; }
 .hero-photo-count { position: absolute; z-index: 4; right: 0; bottom: 38px; width: 76px; height: 76px; display: flex; flex-direction: column; align-items: center; justify-content: center; border: 1px solid #ead8ce; border-radius: 50%; background: #fffaf6; color: #95766f; box-shadow: 0 14px 28px #55343e1c, inset 0 0 0 5px #fffaf680; }
