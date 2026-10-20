@@ -231,7 +231,9 @@ function App() {
                 <div className="hero-photo-shade" />
               </div>
             </motion.div>
-            <div className="hero-photo-info">
+          </motion.div>
+          <motion.div className="hero-photo-info" initial={{ opacity: 0, y: 24, scale: 0.94 }} animate={{ opacity: 1, y: [0, -7, 0], scale: 1 }} transition={{ opacity: { duration: 0.8, delay: 0.18 }, scale: { duration: 1.1, delay: 0.18, ease: [0.22, 1, 0.36, 1] }, y: { duration: 6, repeat: Infinity, ease: 'easeInOut' } }}>
+            <div className="hero-photo-info-plane">
               <span className="hero-edition">ALBUM 20/10</span>
               <div className="hero-photo-caption"><span>20/10</span><strong>{content.recipient}</strong></div>
             </div>
