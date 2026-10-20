@@ -486,7 +486,7 @@ function App() {
       <audio
         ref={audioRef}
         className="background-music"
-        src="/media/anh-nguyet/background-music.mp3"
+        src="/media/anh-nguyet/background-music-20-10.mp3"
         autoPlay
         loop
         preload="auto"
