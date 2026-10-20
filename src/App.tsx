@@ -134,7 +134,7 @@ function App() {
     videoPlayingRef.current = true
     setVideoPlaying(true)
     const audio = audioRef.current
-    resumeMusicAfterVideoRef.current = musicEnabledRef.current && Boolean(audio && !audio.paused)
+    resumeMusicAfterVideoRef.current = musicEnabledRef.current
     audio?.pause()
     setMusicPlaying(false)
   }
@@ -337,8 +337,8 @@ function App() {
             </div>
           </motion.div>
           <motion.div className="hero-photo-count" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ opacity: { delay: 0.65, duration: 0.45 } }}><span>ẢNH</span><strong>{String(content.media.filter((item) => item.type === 'image').length).padStart(2, '0')}</strong></motion.div>
-          <motion.div className="hero-side-note" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.85, duration: 0.5 }}><div className="hero-side-note-card"><Heart size={14} /><span>Ảnh và video<br />20/10</span></div></motion.div>
         </div>
+        <motion.div className="hero-side-note" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.85, duration: 0.5 }}><div className="hero-side-note-card"><Heart size={14} /><span>&#7842;nh v&#224; video<br />20/10</span></div></motion.div>
         <div className="hero-bottom"><span>20 THÁNG 10</span><span className="hero-bottom-heart">·</span><span>GỬI ÁNH NGUYỆT</span><span className="hero-bottom-count">{content.media.filter((item) => item.type === 'image').length} ẢNH · {content.media.filter((item) => item.type === 'video').length} VIDEO</span></div>
       </section>
 
@@ -414,7 +414,7 @@ function App() {
         </div>
         {content.media.filter((item) => item.type === 'video').map((video) => (
           <motion.article className="video-card" key={video.src} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: 0.2 }} transition={{ duration: 0.55 }}>
-            <video controls playsInline preload="none" poster={content.coverImage} onPlay={handleVideoPlay} onPause={handleVideoStop} onEnded={handleVideoStop}>
+            <video controls playsInline preload="none" poster={content.coverImage} onPlay={handleVideoPlay} onPlaying={handleVideoPlay} onPause={handleVideoStop} onEnded={handleVideoStop}>
               <source src={video.src} type="video/mp4" />
               Trình duyệt của bạn không hỗ trợ phát video này.
             </video>
