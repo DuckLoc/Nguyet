@@ -97,14 +97,11 @@ main { overflow: hidden; }
 .empty-icon { width: 50px; height: 50px; display: grid; place-items: center; margin-bottom: 3px; border-radius: 50%; background: #f4e6df; color: var(--rose-dark); }
 .gallery-empty strong { color: var(--wine); font-family: var(--serif); font-size: 17px; font-weight: 400; }
 .empty-upload { display: inline-flex; align-items: center; gap: 6px; margin-top: 5px; color: #a26667; font-size: 10px; }
-.photo-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); grid-auto-rows: 205px; gap: 15px; margin-top: 24px; perspective: 1500px; transform-style: preserve-3d; }
-.photo-card { min-width: 0; padding: 8px; border: 1px solid #ecded7; background: #fffcf9; perspective: 1100px; transform-style: preserve-3d; transition: box-shadow .3s, border-color .3s; }
+.photo-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 15px; margin-top: 24px; perspective: 1500px; transform-style: preserve-3d; }
+.photo-card { min-width: 0; align-self: start; padding: 8px; border: 1px solid #ecded7; background: #fffcf9; perspective: 1100px; transform-style: preserve-3d; transition: box-shadow .3s, border-color .3s; }
 .photo-card:hover { border-color: #d9b9ae; box-shadow: 0 12px 30px #55343e12; }
-.photo-card:first-child { grid-column: span 2; grid-row: span 2; }
-.photo-card:nth-child(6) { grid-column: span 2; }
-.photo-preview { position: relative; width: 100%; height: calc(100% - 37px); display: block; overflow: hidden; padding: 0; border: 0; background: #f2e4dd; cursor: zoom-in; transform-style: preserve-3d; transition: transform .35s, box-shadow .35s; }
-.photo-preview::before { position: absolute; z-index: 0; inset: -14px; background-image: var(--photo-background); background-position: center; background-size: cover; content: ''; filter: blur(16px) brightness(.78) saturate(.8); opacity: .5; transform: scale(1.08); pointer-events: none; }
-.photo-preview img { position: relative; z-index: 1; width: 100%; height: 100%; object-fit: contain; object-position: center; }
+.photo-preview { position: relative; width: 100%; height: auto; display: block; overflow: hidden; padding: 0; border: 0; background: #f2e4dd; cursor: zoom-in; transform-style: preserve-3d; transition: transform .35s, box-shadow .35s; }
+.photo-preview img { display: block; width: 100%; height: auto; }
 .photo-preview:hover, .photo-preview:focus-visible { box-shadow: 0 12px 22px #55343e26; transform: translateZ(11px); }
 .photo-zoom { position: absolute; z-index: 2; right: 10px; bottom: 10px; width: 31px; height: 31px; display: grid; place-items: center; border-radius: 50%; background: #fffaf2e8; color: var(--wine); }
 .photo-caption-row { display: flex; align-items: center; gap: 4px; padding: 7px 2px 1px; }
@@ -180,9 +177,7 @@ main { overflow: hidden; }
   .timeline-list { margin-top: 27px; }
   .timeline-item { grid-template-columns: 40px 25px 1fr; gap: 8px; min-height: 120px; }
   .gallery-section { padding-top: 67px; padding-bottom: 70px; }
-  .photo-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); grid-auto-rows: 190px; gap: 11px; }
-  .photo-card:first-child { grid-column: span 2; grid-row: span 2; }
-  .photo-card:nth-child(6) { grid-column: span 2; }
+  .photo-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 11px; }
   .secret-section { padding-top: 58px; padding-bottom: 60px; }
   .video-card { grid-template-columns: 1fr; gap: 0; padding: 10px; }
   .video-caption { padding: 15px 10px 10px; }
@@ -205,11 +200,8 @@ main { overflow: hidden; }
   .gallery-heading { align-items: flex-start; flex-direction: column; gap: 15px; }
   .gallery-heading .section-heading { margin-top: 17px; }
   .gallery-heading .button { margin: 0; }
-  .photo-grid { grid-template-columns: 1fr 1fr; grid-auto-rows: 158px; gap: 8px; }
+  .photo-grid { grid-template-columns: 1fr 1fr; gap: 8px; }
   .photo-card { padding: 5px; }
-  .photo-preview { height: calc(100% - 35px); }
-  .photo-card:first-child { grid-column: span 2; grid-row: span 2; }
-  .photo-card:nth-child(6) { grid-column: span 2; }
   .photo-caption-row input { font-size: 9px; }
   .bundled-label { font-size: 6px; }
   .delete-button { width: 27px; height: 27px; }

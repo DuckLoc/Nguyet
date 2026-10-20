@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, type CSSProperties } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { AnimatePresence, motion, MotionConfig } from 'motion/react'
 import {
   ArrowDown,
@@ -302,7 +302,7 @@ function App() {
         <div className="photo-grid">
             {galleryPhotos.map((photo, index) => (
               <motion.article className={`photo-card ${photo.upload ? 'photo-card-upload' : ''}`} key={photo.id} initial={{ opacity: 0, y: 22, scale: 0.94, rotateY: index % 2 === 0 ? -10 : 10, rotateX: 5 }} whileInView={{ opacity: 1, y: 0, scale: 1, rotateY: 0, rotateX: 0 }} viewport={{ once: true, amount: 0.12 }} transition={{ duration: 0.62, delay: Math.min(index % 4, 3) * 0.07, ease: 'easeOut' }}>
-                <button className="photo-preview" style={{ '--photo-background': `url("${photo.src}")` } as CSSProperties} onClick={() => setActivePhoto(index)} aria-label={`Xem ảnh ${index + 1}`}>
+                <button className="photo-preview" onClick={() => setActivePhoto(index)} aria-label={`Xem ảnh ${index + 1}`}>
                   <img src={photo.src} alt={photo.caption || `Ảnh ${index + 1}`} loading={index === 0 ? 'eager' : 'lazy'} decoding="async" /><span className="photo-zoom"><Camera size={18} /></span>
                 </button>
                 {photo.upload ? (
