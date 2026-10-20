@@ -412,7 +412,7 @@ function App() {
             </motion.article>
             <motion.article className="photo-card photo-video-card">
               <div className="paired-video-preview">
-                <video controls playsInline preload="none" poster={content.coverImage} onPlay={handleVideoPlay} onPlaying={handleVideoPlay} onPause={handleVideoStop} onEnded={handleVideoStop}>
+                <video controls playsInline preload="none" poster="/media/anh-nguyet/video-18-10-poster.webp" onPlay={handleVideoPlay} onPlaying={handleVideoPlay} onPause={handleVideoStop} onEnded={handleVideoStop}>
                   <source src={october18Video.src} type="video/mp4" />
                   Trình duyệt của bạn không hỗ trợ phát video này.
                 </video>
