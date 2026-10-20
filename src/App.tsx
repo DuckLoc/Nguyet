@@ -90,8 +90,8 @@ function App() {
     const bounds = event.currentTarget.getBoundingClientRect()
     const x = Math.max(0, Math.min(1, (event.clientX - bounds.left) / bounds.width))
     const y = Math.max(0, Math.min(1, (event.clientY - bounds.top) / bounds.height))
-    event.currentTarget.style.setProperty('--showcase-tilt-x', `${((0.5 - y) * 8).toFixed(2)}deg`)
-    event.currentTarget.style.setProperty('--showcase-tilt-y', `${((x - 0.5) * 10).toFixed(2)}deg`)
+    event.currentTarget.style.setProperty('--showcase-tilt-x', `${((0.5 - y) * 12).toFixed(2)}deg`)
+    event.currentTarget.style.setProperty('--showcase-tilt-y', `${((x - 0.5) * 18).toFixed(2)}deg`)
   }
 
   const resetShowcaseTilt = (event: ReactPointerEvent<HTMLDivElement>) => {
@@ -244,7 +244,7 @@ function App() {
           <span className="hero-sparkle hero-sparkle-one" aria-hidden="true"><Sparkles size={19} /></span>
           <span className="hero-sparkle hero-sparkle-two" aria-hidden="true"><Heart size={13} fill="currentColor" /></span>
           <span className="hero-sparkle hero-sparkle-three" aria-hidden="true"><Sparkles size={14} /></span>
-          <motion.div className="hero-photo-shell" initial={{ opacity: 0, y: 24, scale: 0.97 }} animate={{ opacity: 1, y: 0, scale: 1 }} transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1], delay: 0.18 }}>
+          <motion.div className="hero-photo-shell" initial={{ opacity: 0, y: 24, scale: 0.94, rotateY: -22, rotateX: 9 }} animate={{ opacity: 1, y: 0, scale: 1, rotateY: 0, rotateX: 0 }} transition={{ duration: 1.1, ease: [0.22, 1, 0.36, 1], delay: 0.18 }}>
             <div className="hero-photo-frame">
               <img src={content.coverImage} alt={`Ảnh của ${content.recipient}`} fetchPriority="high" />
               <div className="hero-photo-shade" />
@@ -280,7 +280,7 @@ function App() {
       <section className="letter-section section-wrap" id="letter">
         <div className="letter-flower" aria-hidden="true">✿</div>
         <div className="section-kicker"><span>02</span> GỬI ÁNH NGUYỆT</div>
-        <motion.div className="letter-paper" initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: 0.25 }} transition={{ duration: 0.6, ease: 'easeOut' }}>
+        <motion.div className="letter-paper" initial={{ opacity: 0, y: 24, rotateX: 10 }} whileInView={{ opacity: 1, y: 0, rotateX: 0 }} viewport={{ once: true, amount: 0.25 }} transition={{ duration: 0.7, ease: 'easeOut' }}>
           <div className="letter-paper-top"><span>20 THÁNG 10</span><Heart size={17} /></div>
           <h2>{content.letterTitle}</h2>
           {content.letter.map((paragraph, index) => <p key={index}>{paragraph}</p>)}
@@ -295,7 +295,7 @@ function App() {
         </div>
         <div className="timeline-list">
           {content.moments.map((moment, index) => (
-            <motion.article className="timeline-item" key={moment.title} initial={{ opacity: 0, y: 18 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: index * 0.12 }}>
+            <motion.article className="timeline-item" key={moment.title} initial={{ opacity: 0, y: 18, rotateY: index % 2 === 0 ? -12 : 12 }} whileInView={{ opacity: 1, y: 0, rotateY: 0 }} viewport={{ once: true }} transition={{ delay: index * 0.12, duration: 0.65 }}>
               <span className="timeline-dot"><Heart size={13} fill="currentColor" /></span>
               <span className="timeline-number">0{index + 1}</span><div><h3>{moment.title}</h3><p>{moment.text}</p></div>
             </motion.article>
@@ -312,11 +312,10 @@ function App() {
             <input ref={fileInput} type="file" accept="image/*" multiple onChange={(event) => void addPhotos(event.target.files)} disabled={isSaving} />
           </label>
         </div>
-        <div className="storage-note"><LockKeyhole size={15} /><span><strong>Ảnh trong album</strong> được tải cùng website và ai truy cập trang đều có thể xem. Ảnh em thêm ở đây chỉ lưu trong trình duyệt trên thiết bị này, không tải lên máy chủ.</span></div>
         {galleryError && <p className="gallery-error" role="alert">{galleryError}</p>}
         <div className="photo-grid">
             {galleryPhotos.map((photo, index) => (
-              <motion.article className={`photo-card ${photo.upload ? 'photo-card-upload' : ''}`} key={photo.id} initial={{ opacity: 0, y: 22, scale: 0.98 }} whileInView={{ opacity: 1, y: 0, scale: 1 }} viewport={{ once: true, amount: 0.12 }} transition={{ duration: 0.48, delay: Math.min(index % 4, 3) * 0.07, ease: 'easeOut' }}>
+              <motion.article className={`photo-card ${photo.upload ? 'photo-card-upload' : ''}`} key={photo.id} initial={{ opacity: 0, y: 22, scale: 0.94, rotateY: index % 2 === 0 ? -10 : 10, rotateX: 5 }} whileInView={{ opacity: 1, y: 0, scale: 1, rotateY: 0, rotateX: 0 }} viewport={{ once: true, amount: 0.12 }} transition={{ duration: 0.62, delay: Math.min(index % 4, 3) * 0.07, ease: 'easeOut' }}>
                 <button className="photo-preview" onClick={() => setActivePhoto(index)} aria-label={`Xem ảnh ${index + 1}`}>
                   <img src={photo.src} alt={photo.caption || `Ảnh ${index + 1}`} loading={index === 0 ? 'eager' : 'lazy'} decoding="async" /><span className="photo-zoom"><Camera size={18} /></span>
                 </button>
