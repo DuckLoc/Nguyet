@@ -103,10 +103,10 @@ main { overflow: hidden; }
 .photo-card:first-child { grid-column: span 2; grid-row: span 2; }
 .photo-card:nth-child(6) { grid-column: span 2; }
 .photo-preview { position: relative; width: 100%; height: calc(100% - 37px); display: block; overflow: hidden; padding: 0; border: 0; background: #f2e4dd; cursor: zoom-in; transform-style: preserve-3d; transition: transform .35s, box-shadow .35s; }
-.photo-preview img { width: 100%; height: 100%; object-fit: cover; transform: translateZ(0) scale(1); transition: transform .45s cubic-bezier(.2,.7,.2,1); }
+.photo-preview::before { position: absolute; z-index: 0; inset: -14px; background-image: var(--photo-background); background-position: center; background-size: cover; content: ''; filter: blur(16px) brightness(.78) saturate(.8); opacity: .5; transform: scale(1.08); pointer-events: none; }
+.photo-preview img { position: relative; z-index: 1; width: 100%; height: 100%; object-fit: contain; object-position: center; }
 .photo-preview:hover, .photo-preview:focus-visible { box-shadow: 0 12px 22px #55343e26; transform: translateZ(11px); }
-.photo-preview:hover img, .photo-preview:focus-visible img { transform: translateZ(4px) scale(1.055); }
-.photo-zoom { position: absolute; right: 10px; bottom: 10px; width: 31px; height: 31px; display: grid; place-items: center; border-radius: 50%; background: #fffaf2e8; color: var(--wine); }
+.photo-zoom { position: absolute; z-index: 2; right: 10px; bottom: 10px; width: 31px; height: 31px; display: grid; place-items: center; border-radius: 50%; background: #fffaf2e8; color: var(--wine); }
 .photo-caption-row { display: flex; align-items: center; gap: 4px; padding: 7px 2px 1px; }
 .bundled-caption { min-width: 0; overflow: hidden; color: #6f5e59; font-family: var(--serif); font-size: 12px; text-overflow: ellipsis; white-space: nowrap; }
 .bundled-label { margin-left: auto; color: #a8897e; font-size: 7px; letter-spacing: .12em; white-space: nowrap; }
