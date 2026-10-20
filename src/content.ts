@@ -21,6 +21,7 @@ export const content = {
     { src: '/media/anh-nguyet/IMG_9102.jpg', caption: 'Ảnh 11', type: 'image' },
     { src: '/media/anh-nguyet/IMG_9118.jpg', caption: 'Ảnh 12', type: 'image' },
     { src: '/media/anh-nguyet/DSC01010.jpg', caption: 'Ảnh 13', type: 'image' },
+    { src: '/media/anh-nguyet/IMG_9102-hero.jpg', caption: '18/10', type: 'image' },
     { src: '/media/anh-nguyet/video-20-10.mp4', caption: '20/10', type: 'video' },
     { src: '/media/anh-nguyet/video_20261018_170927.mp4', caption: '18/10', type: 'video' },
   ],

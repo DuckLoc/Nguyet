@@ -95,6 +95,9 @@ function App() {
       upload: photo,
     })),
   ]
+  const coverPhotoIndex = galleryPhotos.findIndex((photo) => photo.src === content.coverImage)
+  const coverPhoto = coverPhotoIndex >= 0 ? galleryPhotos[coverPhotoIndex] : undefined
+  const october18Video = content.media.find((item) => item.type === 'video' && item.caption === '18/10')
 
   const startMusic = () => {
     const audio = audioRef.current
@@ -399,8 +402,27 @@ function App() {
           </label>
         </div>
         {galleryError && <p className="gallery-error" role="alert">{galleryError}</p>}
+        {coverPhoto && october18Video && (
+          <motion.div className="photo-video-pair" initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: 0.15 }} transition={{ duration: 0.5 }}>
+            <motion.article className="photo-card">
+              <button className="photo-preview" onClick={() => setActivePhoto(coverPhotoIndex)} aria-label={`Xem ảnh ${coverPhotoIndex + 1}`}>
+                <img src={coverPhoto.src} alt={coverPhoto.caption} loading="eager" decoding="async" /><span className="photo-zoom"><Camera size={18} /></span>
+              </button>
+              <div className="photo-caption-row"><span className="bundled-caption">{coverPhoto.caption}</span><span className="bundled-label">ẢNH</span></div>
+            </motion.article>
+            <motion.article className="photo-card photo-video-card">
+              <div className="paired-video-preview">
+                <video controls playsInline preload="none" poster={content.coverImage} onPlay={handleVideoPlay} onPlaying={handleVideoPlay} onPause={handleVideoStop} onEnded={handleVideoStop}>
+                  <source src={october18Video.src} type="video/mp4" />
+                  Trình duyệt của bạn không hỗ trợ phát video này.
+                </video>
+              </div>
+              <div className="photo-caption-row"><span className="bundled-caption">{october18Video.caption}</span><span className="bundled-label">VIDEO</span></div>
+            </motion.article>
+          </motion.div>
+        )}
         <div className="photo-grid">
-            {galleryPhotos.map((photo, index) => (
+            {galleryPhotos.map((photo, index) => photo.src === content.coverImage ? null : (
               <motion.article className={`photo-card ${photo.upload ? 'photo-card-upload' : ''}`} key={photo.id} initial={{ opacity: 0, y: 22, scale: 0.98 }} whileInView={{ opacity: 1, y: 0, scale: 1 }} viewport={{ once: true, amount: 0.12 }} transition={{ duration: 0.48, delay: Math.min(index % 4, 3) * 0.07, ease: 'easeOut' }}>
                 <button className="photo-preview" onClick={() => setActivePhoto(index)} aria-label={`Xem ảnh ${index + 1}`}>
                   <img src={photo.src} alt={photo.caption || `Ảnh ${index + 1}`} loading={index === 0 ? 'eager' : 'lazy'} decoding="async" /><span className="photo-zoom"><Camera size={18} /></span>
@@ -414,9 +436,9 @@ function App() {
               </motion.article>
             ))}
         </div>
-        {content.media.filter((item) => item.type === 'video').map((video) => (
+        {content.media.filter((item) => item.type === 'video' && item.caption !== '18/10').map((video) => (
           <motion.article className="video-card" key={video.src} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: 0.2 }} transition={{ duration: 0.55 }}>
-            <video controls playsInline preload="none" poster={content.coverImage} onPlay={handleVideoPlay} onPlaying={handleVideoPlay} onPause={handleVideoStop} onEnded={handleVideoStop}>
+            <video controls playsInline preload="none" poster="/media/anh-nguyet/video-20-10-poster.webp" onPlay={handleVideoPlay} onPlaying={handleVideoPlay} onPause={handleVideoStop} onEnded={handleVideoStop}>
               <source src={video.src} type="video/mp4" />
               Trình duyệt của bạn không hỗ trợ phát video này.
             </video>
