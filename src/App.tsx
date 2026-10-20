@@ -238,8 +238,8 @@ function App() {
               <div className="hero-photo-caption"><span>20/10</span><strong>{content.recipient}</strong></div>
             </div>
           </motion.div>
-          <motion.div className="hero-photo-count" initial={{ opacity: 0, scale: 0.7 }} animate={{ opacity: 1, scale: 1, y: [0, -5, 0] }} transition={{ opacity: { delay: 0.65, duration: 0.45 }, scale: { delay: 0.65, duration: 0.45 }, y: { delay: 1.2, duration: 4, repeat: Infinity, ease: 'easeInOut' } }}><span>ẢNH</span><strong>{String(content.media.filter((item) => item.type === 'image').length).padStart(2, '0')}</strong></motion.div>
-          <motion.div className="hero-side-note" initial={{ opacity: 0, x: 12 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.85, duration: 0.5 }}><div className="hero-side-note-card"><Heart size={14} /><span>Ảnh và video<br />20/10</span></div></motion.div>
+          <motion.div className="hero-photo-count" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ opacity: { delay: 0.65, duration: 0.45 } }}><span>ẢNH</span><strong>{String(content.media.filter((item) => item.type === 'image').length).padStart(2, '0')}</strong></motion.div>
+          <motion.div className="hero-side-note" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.85, duration: 0.5 }}><div className="hero-side-note-card"><Heart size={14} /><span>Ảnh và video<br />20/10</span></div></motion.div>
         </div>
         <div className="hero-bottom"><span>20 THÁNG 10</span><span className="hero-bottom-heart">·</span><span>GỬI ÁNH NGUYỆT</span><span className="hero-bottom-count">{content.media.filter((item) => item.type === 'image').length} ẢNH · {content.media.filter((item) => item.type === 'video').length} VIDEO</span></div>
       </section>

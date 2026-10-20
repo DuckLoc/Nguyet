@@ -34,12 +34,12 @@ main { overflow: hidden; }
 .hero-photo-caption { position: absolute; z-index: 3; right: 22px; bottom: 24px; left: 22px; display: flex; flex-direction: column; gap: 5px; color: white; text-shadow: 0 1px 8px #27181bcc; }
 .hero-photo-caption span { font-size: 8px; letter-spacing: .2em; }
 .hero-photo-caption strong { font-family: var(--serif); font-size: 27px; font-weight: 400; }
-.hero-photo-count { position: absolute; z-index: 4; right: 0; bottom: 38px; width: 76px; height: 76px; display: flex; flex-direction: column; align-items: center; justify-content: center; border: 1px solid #ead8ce; border-radius: 50%; background: #fffaf6; color: #95766f; box-shadow: 0 14px 28px #55343e1c, inset 0 0 0 5px #fffaf680; }
+.hero-photo-count { position: absolute; z-index: 12; right: 0; bottom: 38px; width: 76px; height: 76px; display: flex; flex-direction: column; align-items: center; justify-content: center; border: 1px solid #ead8ce; border-radius: 50%; background: #fffaf6; color: #95766f; box-shadow: 0 14px 28px #55343e1c, inset 0 0 0 5px #fffaf680; transform: translateZ(88px); transform-style: preserve-3d; }
 .hero-photo-count::after { position: absolute; inset: -6px; border: 1px solid #c9908466; border-radius: inherit; content: ''; }
 .hero-photo-count span { font-size: 7px; letter-spacing: .16em; }
 .hero-photo-count strong { color: var(--wine); font-family: var(--serif); font-size: 25px; font-weight: 400; line-height: 1.2; }
-.hero-side-note { position: absolute; z-index: 5; top: 128px; right: -11px; display: flex; align-items: center; gap: 9px; color: var(--rose-dark); font-family: var(--serif); font-size: 11px; font-style: italic; line-height: 1.5; perspective: 600px; }
-.hero-side-note-card { display: flex; align-items: center; gap: 9px; padding: 10px 12px; border: 1px solid #ffffffb8; background: #fffaf6dc; box-shadow: 0 12px 28px #55343e17; backdrop-filter: blur(10px); transform: rotateY(-12deg) rotateX(4deg) translateZ(34px); }
+.hero-side-note { position: absolute; z-index: 13; top: 128px; right: -11px; display: flex; align-items: center; gap: 9px; color: var(--rose-dark); font-family: var(--serif); font-size: 11px; font-style: italic; line-height: 1.5; perspective: 600px; transform: translateZ(88px); transform-style: preserve-3d; }
+.hero-side-note-card { display: flex; align-items: center; gap: 9px; padding: 10px 12px; border: 1px solid #ffffffb8; background: #fffaf6dc; box-shadow: 0 12px 28px #55343e17; backdrop-filter: blur(10px); transform: rotateY(-12deg) rotateX(4deg); }
 .hero-bottom { position: absolute; bottom: 0; left: 0; width: 100%; min-height: 42px; display: flex; align-items: center; justify-content: center; gap: 14px; border-top: 1px solid #eadbd3; color: #a69086; font-size: 8px; letter-spacing: .19em; }
 .hero-bottom-heart { color: #cf8288; font-size: 8px; }
 .hero-bottom-count { position: absolute; right: max(6.5vw, 28px); letter-spacing: .08em; }
