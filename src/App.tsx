@@ -1,5 +1,5 @@
-import { useEffect, useRef, useState } from 'react'
-import { AnimatePresence, motion } from 'motion/react'
+import { useEffect, useRef, useState, type PointerEvent as ReactPointerEvent } from 'react'
+import { AnimatePresence, motion, MotionConfig } from 'motion/react'
 import {
   ArrowDown,
   ArrowLeft,
@@ -83,6 +83,21 @@ function App() {
       upload: photo,
     })),
   ]
+
+  const tiltShowcase = (event: ReactPointerEvent<HTMLDivElement>) => {
+    if (event.pointerType === 'touch' || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
+
+    const bounds = event.currentTarget.getBoundingClientRect()
+    const x = Math.max(0, Math.min(1, (event.clientX - bounds.left) / bounds.width))
+    const y = Math.max(0, Math.min(1, (event.clientY - bounds.top) / bounds.height))
+    event.currentTarget.style.setProperty('--showcase-tilt-x', `${((0.5 - y) * 8).toFixed(2)}deg`)
+    event.currentTarget.style.setProperty('--showcase-tilt-y', `${((x - 0.5) * 10).toFixed(2)}deg`)
+  }
+
+  const resetShowcaseTilt = (event: ReactPointerEvent<HTMLDivElement>) => {
+    event.currentTarget.style.setProperty('--showcase-tilt-x', '0deg')
+    event.currentTarget.style.setProperty('--showcase-tilt-y', '0deg')
+  }
 
   useEffect(() => {
     let cancelled = false
@@ -191,16 +206,17 @@ function App() {
   }
 
   return (
+    <MotionConfig reducedMotion="user">
     <main>
       <header className="topbar">
         <a className="brand" href="#home" aria-label="Về đầu trang">
           <span className="brand-mark"><Heart size={17} fill="currentColor" /></span>
-          <span>một chút thương</span>
+          <span>Gửi Ánh Nguyệt</span>
         </a>
         <nav aria-label="Điều hướng chính">
-          <a href="#letter">Lá thư</a>
-          <a href="#moments">Lời nhắn</a>
-          <a href="#gallery">Góc ảnh</a>
+          <a href="#letter">Lời chúc</a>
+          <a href="#moments">Vài lời</a>
+          <a href="#gallery">Ảnh &amp; video</a>
         </nav>
         <a className="topbar-date" href="#greeting">20.10 <span>♡</span></a>
       </header>
@@ -217,39 +233,45 @@ function App() {
             {content.intro}
           </motion.p>
           <motion.button className="button button-primary" onClick={() => document.getElementById('gallery')?.scrollIntoView({ behavior: 'smooth' })} whileHover={{ y: -2 }} whileTap={{ scale: 0.98 }}>
-            <Camera size={17} /> Xem món quà <ArrowDown size={16} />
+            <Camera size={17} /> Xem album <ArrowDown size={16} />
           </motion.button>
-          <div className="hero-signoff"><span className="signoff-line" /> 20 tháng 10, dành cho {content.recipient}</div>
+          <div className="hero-signoff"><span className="signoff-line" /> 20/10 · {content.recipient}</div>
         </div>
 
-        <div className="hero-showcase">
-          <div className="hero-photo-frame">
-            <img src={content.coverImage} alt={`Ảnh của ${content.recipient}`} fetchPriority="high" />
-            <div className="hero-photo-shade" />
-            <span className="hero-edition">BỘ SƯU TẬP 20/10</span>
-            <div className="hero-photo-caption"><span>MÓN QUÀ ĐẶC BIỆT</span><strong>{content.recipient}</strong></div>
-          </div>
-          <div className="hero-photo-count"><span>ẢNH</span><strong>{String(content.media.filter((item) => item.type === 'image').length).padStart(2, '0')}</strong></div>
-          <div className="hero-side-note"><Heart size={14} fill="currentColor" /><span>được chuẩn bị<br />dành riêng cho em</span></div>
+        <div className="hero-showcase" onPointerMove={tiltShowcase} onPointerLeave={resetShowcaseTilt}>
+          <div className="hero-orbit hero-orbit-back" aria-hidden="true"><span /></div>
+          <div className="hero-orbit hero-orbit-front" aria-hidden="true"><span /></div>
+          <span className="hero-sparkle hero-sparkle-one" aria-hidden="true"><Sparkles size={19} /></span>
+          <span className="hero-sparkle hero-sparkle-two" aria-hidden="true"><Heart size={13} fill="currentColor" /></span>
+          <span className="hero-sparkle hero-sparkle-three" aria-hidden="true"><Sparkles size={14} /></span>
+          <motion.div className="hero-photo-shell" initial={{ opacity: 0, y: 24, scale: 0.97 }} animate={{ opacity: 1, y: 0, scale: 1 }} transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1], delay: 0.18 }}>
+            <div className="hero-photo-frame">
+              <img src={content.coverImage} alt={`Ảnh của ${content.recipient}`} fetchPriority="high" />
+              <div className="hero-photo-shade" />
+              <span className="hero-edition">ALBUM 20/10</span>
+              <div className="hero-photo-caption"><span>20/10</span><strong>{content.recipient}</strong></div>
+            </div>
+          </motion.div>
+          <motion.div className="hero-photo-count" initial={{ opacity: 0, scale: 0.7 }} animate={{ opacity: 1, scale: 1, y: [0, -5, 0] }} transition={{ opacity: { delay: 0.65, duration: 0.45 }, scale: { delay: 0.65, duration: 0.45 }, y: { delay: 1.2, duration: 4, repeat: Infinity, ease: 'easeInOut' } }}><span>ẢNH</span><strong>{String(content.media.filter((item) => item.type === 'image').length).padStart(2, '0')}</strong></motion.div>
+          <motion.div className="hero-side-note" initial={{ opacity: 0, x: 12 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.85, duration: 0.5 }}><div className="hero-side-note-card"><Heart size={14} /><span>Ảnh và video<br />20/10</span></div></motion.div>
         </div>
-        <div className="hero-bottom"><span>20 THÁNG 10</span><span className="hero-bottom-heart">♥</span><span>MỘT MÓN QUÀ DÀNH RIÊNG</span><span className="hero-bottom-count">{content.media.filter((item) => item.type === 'image').length} ẢNH · {content.media.filter((item) => item.type === 'video').length} VIDEO</span></div>
+        <div className="hero-bottom"><span>20 THÁNG 10</span><span className="hero-bottom-heart">·</span><span>GỬI ÁNH NGUYỆT</span><span className="hero-bottom-count">{content.media.filter((item) => item.type === 'image').length} ẢNH · {content.media.filter((item) => item.type === 'video').length} VIDEO</span></div>
       </section>
 
       <section className="greeting section-wrap" id="greeting">
-        <div className="section-kicker"><span>01</span> MÓN QUÀ DÀNH RIÊNG CHO EM</div>
+        <div className="section-kicker"><span>01</span> MỞ THIỆP</div>
         <AnimatePresence>
           {!opened ? (
             <motion.button className="envelope" onClick={openLetter} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0, scale: 0.92 }} aria-label="Mở thiệp chúc mừng">
               <div className="envelope-seal"><Heart size={25} fill="currentColor" /></div>
-              <span>Chạm để mở thiệp</span><ChevronDown size={17} />
+              <span>Xem lời chúc</span><ChevronDown size={17} />
             </motion.button>
           ) : (
             <motion.div className="greeting-card" initial={{ opacity: 0, y: 24, scale: 0.98 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.65 }}>
               <span className="greeting-spark"><Sparkles size={20} /></span>
               <p className="script-line">{content.greeting}</p>
-              <h2>Thân gửi <em>{content.recipient}</em></h2>
-              <p className="greeting-copy">Mong hôm nay ôm em bằng những điều thật xinh, thật ấm áp và thật nhiều niềm vui.</p>
-              <span className="greeting-heart">♡</span>
+              <h2>{content.recipient}</h2>
+              <p className="greeting-copy">Chúc em hôm nay vui, ăn ngon và đừng làm việc nhiều quá nhé.</p>
             </motion.div>
           )}
         </AnimatePresence>
@@ -257,19 +279,19 @@ function App() {
 
       <section className="letter-section section-wrap" id="letter">
         <div className="letter-flower" aria-hidden="true">✿</div>
-        <div className="section-kicker"><span>02</span> ĐÔI ĐIỀU MUỐN NÓI</div>
-        <div className="letter-paper">
-          <div className="letter-paper-top"><span>GỬI EM,</span><Heart size={17} /></div>
+        <div className="section-kicker"><span>02</span> GỬI ÁNH NGUYỆT</div>
+        <motion.div className="letter-paper" initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: 0.25 }} transition={{ duration: 0.6, ease: 'easeOut' }}>
+          <div className="letter-paper-top"><span>20 THÁNG 10</span><Heart size={17} /></div>
           <h2>{content.letterTitle}</h2>
           {content.letter.map((paragraph, index) => <p key={index}>{paragraph}</p>)}
-          <div className="letter-signature"><span>Thương mến,</span><Heart size={18} fill="currentColor" /></div>
-        </div>
+          <div className="letter-signature"><span>— {content.sender}</span></div>
+        </motion.div>
       </section>
 
       <section className="timeline-section section-wrap" id="moments">
-        <div className="section-kicker"><span>03</span> NHỮNG ĐIỀU NHỎ BÉ</div>
+        <div className="section-kicker"><span>03</span> VÀI DÒNG</div>
         <div className="section-heading">
-          <h2>Một dòng thời gian dịu dàng</h2><p>{content.momentsSubtitle}</p>
+          <h2>{content.momentsTitle}</h2><p>{content.momentsSubtitle}</p>
         </div>
         <div className="timeline-list">
           {content.moments.map((moment, index) => (
@@ -282,53 +304,53 @@ function App() {
       </section>
 
       <section className="gallery-section section-wrap" id="gallery">
-        <div className="section-kicker"><span>04</span> NHỮNG KHUNG HÌNH CỦA EM</div>
+        <div className="section-kicker"><span>04</span> ALBUM</div>
         <div className="gallery-heading">
-          <div className="section-heading"><h2>Những khung hình của em</h2><p>Ảnh và video đã được chuẩn bị sẵn trong website — mở ra là thấy.</p></div>
+          <div className="section-heading"><h2>Ảnh và video</h2><p>Anh gom lại ở đây để em tiện xem.</p></div>
           <label className={`button button-outline ${isSaving ? 'is-disabled' : ''}`}>
-            <ImagePlus size={17} /> {isSaving ? 'Đang lưu…' : 'Thêm ảnh riêng'}
+            <ImagePlus size={17} /> {isSaving ? 'Đang lưu…' : 'Thêm ảnh'}
             <input ref={fileInput} type="file" accept="image/*" multiple onChange={(event) => void addPhotos(event.target.files)} disabled={isSaving} />
           </label>
         </div>
-        <div className="storage-note"><LockKeyhole size={15} /><span><strong>Ảnh có sẵn</strong> được đóng gói cùng website và người truy cập website đã triển khai có thể xem chúng. Ảnh thêm bằng nút bên trên chỉ lưu trong trình duyệt trên thiết bị này, không tải lên máy chủ hay đồng bộ.</span></div>
+        <div className="storage-note"><LockKeyhole size={15} /><span><strong>Ảnh trong album</strong> được tải cùng website và ai truy cập trang đều có thể xem. Ảnh em thêm ở đây chỉ lưu trong trình duyệt trên thiết bị này, không tải lên máy chủ.</span></div>
         {galleryError && <p className="gallery-error" role="alert">{galleryError}</p>}
         <div className="photo-grid">
             {galleryPhotos.map((photo, index) => (
-              <article className={`photo-card ${photo.upload ? 'photo-card-upload' : ''}`} key={photo.id}>
+              <motion.article className={`photo-card ${photo.upload ? 'photo-card-upload' : ''}`} key={photo.id} initial={{ opacity: 0, y: 22, scale: 0.98 }} whileInView={{ opacity: 1, y: 0, scale: 1 }} viewport={{ once: true, amount: 0.12 }} transition={{ duration: 0.48, delay: Math.min(index % 4, 3) * 0.07, ease: 'easeOut' }}>
                 <button className="photo-preview" onClick={() => setActivePhoto(index)} aria-label={`Xem ảnh ${index + 1}`}>
                   <img src={photo.src} alt={photo.caption || `Ảnh ${index + 1}`} loading={index === 0 ? 'eager' : 'lazy'} decoding="async" /><span className="photo-zoom"><Camera size={18} /></span>
                 </button>
                 {photo.upload ? (
                   <div className="photo-caption-row">
-                    <input value={photo.caption} maxLength={120} placeholder="Viết một chú thích nhỏ…" aria-label={`Chú thích ảnh ${index + 1}`} onChange={(event) => setPhotos((current) => current.map((item) => item.id === photo.upload?.id ? { ...item, caption: event.target.value } : item))} onBlur={(event) => photo.upload && void updateCaption(photo.upload, event.target.value)} />
+                    <input value={photo.caption} maxLength={120} placeholder="Thêm chú thích…" aria-label={`Chú thích ảnh ${index + 1}`} onChange={(event) => setPhotos((current) => current.map((item) => item.id === photo.upload?.id ? { ...item, caption: event.target.value } : item))} onBlur={(event) => photo.upload && void updateCaption(photo.upload, event.target.value)} />
                     <button className="icon-button delete-button" onClick={() => photo.upload && void deletePhoto(photo.upload)} aria-label="Xóa ảnh"><Trash2 size={16} /></button>
                   </div>
                 ) : <div className="photo-caption-row"><span className="bundled-caption">{photo.caption}</span><span className="bundled-label">ĐÃ CÓ SẴN</span></div>}
-              </article>
+              </motion.article>
             ))}
         </div>
         {content.media.filter((item) => item.type === 'video').map((video) => (
-          <article className="video-card" key={video.src}>
+          <motion.article className="video-card" key={video.src} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: 0.2 }} transition={{ duration: 0.55 }}>
             <video controls playsInline preload="none" poster={content.coverImage}>
               <source src={video.src} type="video/mp4" />
               Trình duyệt của bạn không hỗ trợ phát video này.
             </video>
-            <div className="video-caption"><span><Sparkles size={14} /> THƯỚC PHIM DÀNH RIÊNG CHO EM</span><strong>{video.caption}</strong></div>
-          </article>
+            <div className="video-caption"><span><Sparkles size={14} /> VIDEO</span><strong>{video.caption}</strong></div>
+          </motion.article>
         ))}
       </section>
 
       <section className="secret-section section-wrap">
         <div className="secret-card">
           <div className="secret-decoration">✿</div>
-          <div className="section-kicker"><span>05</span> MỘT ĐIỀU THẬT KHẼ</div>
+          <div className="section-kicker"><span>05</span> LỜI NHẮN</div>
           <LockKeyhole size={23} className="secret-lock" />
           <h2>{content.secretTitle}</h2>
           <AnimatePresence mode="wait">
             {secretRevealed ? (
               <motion.p className="secret-message" key="message" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}>{content.secretMessage}</motion.p>
             ) : (
-              <motion.button className="button button-primary secret-button" key="button" onClick={() => setSecretRevealed(true)} initial={{ opacity: 0 }} animate={{ opacity: 1 }}>Mở lời nhắn <Heart size={15} /></motion.button>
+              <motion.button className="button button-primary secret-button" key="button" onClick={() => setSecretRevealed(true)} initial={{ opacity: 0 }} animate={{ opacity: 1 }}>Xem lời nhắn <Heart size={15} /></motion.button>
             )}
           </AnimatePresence>
           <span className="secret-heart">♡</span>
@@ -356,6 +378,7 @@ function App() {
       </AnimatePresence>
       <span className="sr-only" aria-live="polite">{opened ? 'Thiệp đã mở' : ''}</span>
     </main>
+    </MotionConfig>
   )
 }
 

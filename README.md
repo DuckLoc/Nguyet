@@ -4,7 +4,7 @@ Website quà tặng 20/10 dành riêng cho Ánh Nguyệt, được xây dựng b
 
 ## Chỉnh sửa nội dung
 
-Mở [`src/content.ts`](./src/content.ts) để sửa tên người nhận, lời chúc, thư, các lời nhắn, đường dẫn media và chú thích ảnh/video. Nội dung mặc định không nêu tên người gửi hay khẳng định kỷ niệm có thật. Nếu muốn ký tên hoặc thêm chú thích cụ thể, hãy tự cập nhật cấu hình.
+Mở [`src/content.ts`](./src/content.ts) để sửa tên người gửi và người nhận, lời chúc, thư, các lời nhắn, đường dẫn media và chú thích ảnh/video. Nội dung không khẳng định kỷ niệm cụ thể ngoài những gì được ghi trong cấu hình.
 
 ## Media có sẵn trong website
 
