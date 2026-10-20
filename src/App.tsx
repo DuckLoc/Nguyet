@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, type PointerEvent as ReactPointerEvent } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { AnimatePresence, motion, MotionConfig } from 'motion/react'
 import {
   ArrowDown,
@@ -83,21 +83,6 @@ function App() {
       upload: photo,
     })),
   ]
-
-  const tiltShowcase = (event: ReactPointerEvent<HTMLDivElement>) => {
-    if (event.pointerType === 'touch' || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
-
-    const bounds = event.currentTarget.getBoundingClientRect()
-    const x = Math.max(0, Math.min(1, (event.clientX - bounds.left) / bounds.width))
-    const y = Math.max(0, Math.min(1, (event.clientY - bounds.top) / bounds.height))
-    event.currentTarget.style.setProperty('--showcase-tilt-x', `${((0.5 - y) * 12).toFixed(2)}deg`)
-    event.currentTarget.style.setProperty('--showcase-tilt-y', `${((x - 0.5) * 18).toFixed(2)}deg`)
-  }
-
-  const resetShowcaseTilt = (event: ReactPointerEvent<HTMLDivElement>) => {
-    event.currentTarget.style.setProperty('--showcase-tilt-x', '0deg')
-    event.currentTarget.style.setProperty('--showcase-tilt-y', '0deg')
-  }
 
   useEffect(() => {
     let cancelled = false
@@ -238,15 +223,17 @@ function App() {
           <div className="hero-signoff"><span className="signoff-line" /> 20/10 · {content.recipient}</div>
         </div>
 
-        <div className="hero-showcase" onPointerMove={tiltShowcase} onPointerLeave={resetShowcaseTilt}>
-          <motion.div className="hero-photo-shell" initial={{ opacity: 0, y: 24, scale: 0.94, rotateY: -32, rotateX: 10 }} animate={{ opacity: 1, y: [0, -7, 0], scale: 1, rotateY: [0, -8, 0, 8, 0], rotateX: [0, 3.5, 0, -3.5, 0] }} transition={{ opacity: { duration: 0.8, delay: 0.18 }, scale: { duration: 1.1, delay: 0.18, ease: [0.22, 1, 0.36, 1] }, y: { duration: 6, repeat: Infinity, ease: 'easeInOut' }, rotateY: { duration: 12, repeat: Infinity, ease: 'easeInOut' }, rotateX: { duration: 12, repeat: Infinity, ease: 'easeInOut' } }}>
-            <div className="hero-photo-tilt">
+        <div className="hero-showcase">
+          <motion.div className="hero-photo-shell" initial={{ opacity: 0, y: 24, scale: 0.94 }} animate={{ opacity: 1, y: [0, -7, 0], scale: 1 }} transition={{ opacity: { duration: 0.8, delay: 0.18 }, scale: { duration: 1.1, delay: 0.18, ease: [0.22, 1, 0.36, 1] }, y: { duration: 6, repeat: Infinity, ease: 'easeInOut' } }}>
+            <motion.div className="hero-photo-tilt" animate={{ rotateY: [0, -7, 0, 7, 0], rotateX: [0, 2.5, 0, -2.5, 0], z: 28 }} transition={{ rotateY: { duration: 12, repeat: Infinity, ease: 'easeInOut' }, rotateX: { duration: 12, repeat: Infinity, ease: 'easeInOut' } }}>
               <div className="hero-photo-frame">
                 <img src={content.coverImage} alt={`Ảnh của ${content.recipient}`} fetchPriority="high" />
                 <div className="hero-photo-shade" />
-                <span className="hero-edition">ALBUM 20/10</span>
-                <div className="hero-photo-caption"><span>20/10</span><strong>{content.recipient}</strong></div>
               </div>
+            </motion.div>
+            <div className="hero-photo-info">
+              <span className="hero-edition">ALBUM 20/10</span>
+              <div className="hero-photo-caption"><span>20/10</span><strong>{content.recipient}</strong></div>
             </div>
           </motion.div>
           <motion.div className="hero-photo-count" initial={{ opacity: 0, scale: 0.7 }} animate={{ opacity: 1, scale: 1, y: [0, -5, 0] }} transition={{ opacity: { delay: 0.65, duration: 0.45 }, scale: { delay: 0.65, duration: 0.45 }, y: { delay: 1.2, duration: 4, repeat: Infinity, ease: 'easeInOut' } }}><span>ẢNH</span><strong>{String(content.media.filter((item) => item.type === 'image').length).padStart(2, '0')}</strong></motion.div>
