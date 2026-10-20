@@ -328,7 +328,7 @@ function App() {
                   <div className="hero-photo-shade" />
                   <span className="hero-depth-clock" aria-hidden="true">20:10</span>
                 </div>
-                <img className="hero-photo-subject" src="/media/anh-nguyet/IMG_20260929_203620-depth-subject.png" alt="" aria-hidden="true" draggable={false} />
+                <img className="hero-photo-subject" src="/media/anh-nguyet/IMG_9102-depth-subject.png" alt="" aria-hidden="true" draggable={false} />
               </div>
             </motion.div>
           </motion.div>

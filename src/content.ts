@@ -6,7 +6,7 @@ export const content = {
   headlineAccent: 'anh gom cho em.',
   intro:
     'Anh làm album nhỏ này từ ảnh và video trong máy. Gửi em xem nhân ngày 20/10.',
-  coverImage: '/media/anh-nguyet/IMG_20260929_203620.jpg',
+  coverImage: '/media/anh-nguyet/IMG_9102-hero.jpg',
   media: [
     { src: '/media/anh-nguyet/IMG_20260929_203620.jpg', caption: 'Ảnh 01', type: 'image' },
     { src: '/media/anh-nguyet/IMG_20260929_204315.jpg', caption: 'Ảnh 02', type: 'image' },
@@ -22,6 +22,7 @@ export const content = {
     { src: '/media/anh-nguyet/IMG_9118.jpg', caption: 'Ảnh 12', type: 'image' },
     { src: '/media/anh-nguyet/DSC01010.jpg', caption: 'Ảnh 13', type: 'image' },
     { src: '/media/anh-nguyet/video-20-10.mp4', caption: '20/10', type: 'video' },
+    { src: '/media/anh-nguyet/video_20261018_170927.mp4', caption: '18/10', type: 'video' },
   ],
   greeting: '20/10 vui vẻ nha',
   letterTitle: 'Chúc em 20/10 vui vẻ',
