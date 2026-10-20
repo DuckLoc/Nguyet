@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState, type CSSProperties } from 'react'
 import { AnimatePresence, motion, MotionConfig } from 'motion/react'
 import {
   ArrowDown,
@@ -9,8 +9,12 @@ import {
   Heart,
   ImagePlus,
   LockKeyhole,
+  Music2,
+  Pause,
   Sparkles,
   Trash2,
+  Volume2,
+  VolumeX,
   X,
 } from 'lucide-react'
 import { content } from './content'
@@ -70,6 +74,14 @@ function App() {
   const [secretRevealed, setSecretRevealed] = useState(false)
   const [galleryError, setGalleryError] = useState('')
   const [isSaving, setIsSaving] = useState(false)
+  const [musicPlaying, setMusicPlaying] = useState(false)
+  const [musicVolume, setMusicVolume] = useState(0.35)
+  const [videoPlaying, setVideoPlaying] = useState(false)
+  const audioRef = useRef<HTMLAudioElement>(null)
+  const musicEnabledRef = useRef(true)
+  const videoPlayingRef = useRef(false)
+  const resumeMusicAfterVideoRef = useRef(false)
+  const musicVolumeRef = useRef(0.35)
   const fileInput = useRef<HTMLInputElement>(null)
   const photoUrls = useRef<string[]>([])
   const galleryPhotos: GalleryPhoto[] = [
@@ -83,6 +95,86 @@ function App() {
       upload: photo,
     })),
   ]
+
+  const startMusic = () => {
+    const audio = audioRef.current
+    musicEnabledRef.current = true
+    if (videoPlayingRef.current) {
+      resumeMusicAfterVideoRef.current = true
+      return
+    }
+    if (!audio) return
+    audio.volume = musicVolumeRef.current
+    void audio.play()
+      .then(() => setMusicPlaying(true))
+      .catch(() => setMusicPlaying(false))
+  }
+
+  const stopMusic = () => {
+    musicEnabledRef.current = false
+    resumeMusicAfterVideoRef.current = false
+    audioRef.current?.pause()
+    setMusicPlaying(false)
+  }
+
+  const toggleMusic = () => {
+    const audio = audioRef.current
+    if (videoPlayingRef.current) {
+      const resume = !musicEnabledRef.current
+      musicEnabledRef.current = resume
+      resumeMusicAfterVideoRef.current = resume
+      return
+    }
+    if (musicPlaying || (audio && !audio.paused)) stopMusic()
+    else startMusic()
+  }
+
+  const handleVideoPlay = () => {
+    if (videoPlayingRef.current) return
+    videoPlayingRef.current = true
+    setVideoPlaying(true)
+    const audio = audioRef.current
+    resumeMusicAfterVideoRef.current = musicEnabledRef.current && Boolean(audio && !audio.paused)
+    audio?.pause()
+    setMusicPlaying(false)
+  }
+
+  const handleVideoStop = () => {
+    if (!videoPlayingRef.current) return
+    videoPlayingRef.current = false
+    setVideoPlaying(false)
+    const shouldResume = resumeMusicAfterVideoRef.current && musicEnabledRef.current
+    resumeMusicAfterVideoRef.current = false
+    if (shouldResume) startMusic()
+  }
+
+  const changeMusicVolume = (value: number) => {
+    const volume = Math.max(0, Math.min(1, value))
+    musicVolumeRef.current = volume
+    setMusicVolume(volume)
+    if (audioRef.current) audioRef.current.volume = volume
+  }
+
+  useEffect(() => {
+    const audio = audioRef.current
+    if (!audio) return
+    audio.volume = musicVolumeRef.current
+    const tryAutoplay = () => {
+      if (!musicEnabledRef.current || videoPlayingRef.current) return
+      audio.volume = musicVolumeRef.current
+      void audio.play()
+        .then(() => setMusicPlaying(true))
+        .catch(() => setMusicPlaying(false))
+    }
+    tryAutoplay()
+    const unlockAudio = () => tryAutoplay()
+    window.addEventListener('pointerdown', unlockAudio, { once: true })
+    window.addEventListener('keydown', unlockAudio, { once: true })
+    return () => {
+      window.removeEventListener('pointerdown', unlockAudio)
+      window.removeEventListener('keydown', unlockAudio)
+    }
+  }, [])
 
   useEffect(() => {
     let cancelled = false
@@ -192,7 +284,11 @@ function App() {
 
   return (
     <MotionConfig reducedMotion="user">
-    <main>
+    <main style={{
+      '--music-volume': musicVolume,
+      '--music-glow-low': 0.04 + musicVolume * 0.12,
+      '--music-glow-high': 0.08 + musicVolume * 0.3,
+    } as CSSProperties}>
       <header className="topbar">
         <a className="brand" href="#home" aria-label="Về đầu trang">
           <span className="brand-mark"><Heart size={17} fill="currentColor" /></span>
@@ -223,7 +319,7 @@ function App() {
           <div className="hero-signoff"><span className="signoff-line" /> 20/10 · {content.recipient}</div>
         </div>
 
-        <div className="hero-showcase">
+        <div className={`hero-showcase ${musicPlaying && musicVolume > 0 ? 'is-music-playing' : ''}`}>
           <motion.div className="hero-photo-shell" initial={{ opacity: 0, y: 24, scale: 0.94 }} animate={{ opacity: 1, y: [0, -7, 0], scale: 1 }} transition={{ opacity: { duration: 0.8, delay: 0.18 }, scale: { duration: 1.1, delay: 0.18, ease: [0.22, 1, 0.36, 1] }, y: { duration: 6, repeat: Infinity, ease: 'easeInOut' } }}>
             <motion.div className="hero-photo-tilt" animate={{ rotateY: [0, -7, 0, 7, 0], rotateX: [0, 2.5, 0, -2.5, 0], z: 28 }} transition={{ rotateY: { duration: 12, repeat: Infinity, ease: 'easeInOut' }, rotateX: { duration: 12, repeat: Infinity, ease: 'easeInOut' } }}>
               <div className="hero-photo-frame">
@@ -318,7 +414,7 @@ function App() {
         </div>
         {content.media.filter((item) => item.type === 'video').map((video) => (
           <motion.article className="video-card" key={video.src} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: 0.2 }} transition={{ duration: 0.55 }}>
-            <video controls playsInline preload="none" poster={content.coverImage}>
+            <video controls playsInline preload="none" poster={content.coverImage} onPlay={handleVideoPlay} onPause={handleVideoStop} onEnded={handleVideoStop}>
               <source src={video.src} type="video/mp4" />
               Trình duyệt của bạn không hỗ trợ phát video này.
             </video>
@@ -363,6 +459,28 @@ function App() {
           </motion.div>
         )}
       </AnimatePresence>
+      <audio
+        ref={audioRef}
+        className="background-music"
+        src="/media/anh-nguyet/background-music.mp3"
+        autoPlay
+        loop
+        preload="auto"
+        onPlay={() => setMusicPlaying(true)}
+        onPause={() => setMusicPlaying(false)}
+      />
+      <aside className={`music-widget ${musicPlaying && musicVolume > 0 ? 'is-playing' : ''}`} aria-label="Điều khiển nhạc nền">
+        <button className="music-toggle" type="button" onClick={toggleMusic} aria-pressed={musicPlaying}>
+          <span className="music-visualizer" aria-hidden="true"><i /><i /><i /><i /></span>
+          <span>{videoPlaying ? 'Tạm dừng khi xem video' : musicPlaying ? 'Đang phát nhạc' : 'Bật nhạc nền'}</span>
+          {musicPlaying ? <Pause size={14} /> : <Music2 size={14} />}
+        </button>
+        <label className="music-volume-row">
+          <VolumeX size={14} aria-hidden="true" />
+          <input type="range" min="0" max="1" step="0.01" value={musicVolume} onChange={(event) => changeMusicVolume(Number(event.target.value))} aria-label="Âm lượng nhạc" />
+          <Volume2 size={14} aria-hidden="true" />
+        </label>
+      </aside>
       <span className="sr-only" aria-live="polite">{opened ? 'Thiệp đã mở' : ''}</span>
     </main>
     </MotionConfig>
