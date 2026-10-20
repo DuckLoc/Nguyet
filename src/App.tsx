@@ -75,12 +75,10 @@ function App() {
   const [galleryError, setGalleryError] = useState('')
   const [isSaving, setIsSaving] = useState(false)
   const [musicPlaying, setMusicPlaying] = useState(false)
+  const [autoplayBlocked, setAutoplayBlocked] = useState(false)
   const [musicVolume, setMusicVolume] = useState(0.35)
-  const [videoPlaying, setVideoPlaying] = useState(false)
   const audioRef = useRef<HTMLAudioElement>(null)
   const musicEnabledRef = useRef(true)
-  const videoPlayingRef = useRef(false)
-  const resumeMusicAfterVideoRef = useRef(false)
   const musicVolumeRef = useRef(0.35)
   const fileInput = useRef<HTMLInputElement>(null)
   const photoUrls = useRef<string[]>([])
@@ -102,53 +100,30 @@ function App() {
   const startMusic = () => {
     const audio = audioRef.current
     musicEnabledRef.current = true
-    if (videoPlayingRef.current) {
-      resumeMusicAfterVideoRef.current = true
-      return
-    }
     if (!audio) return
     audio.volume = musicVolumeRef.current
     void audio.play()
-      .then(() => setMusicPlaying(true))
-      .catch(() => setMusicPlaying(false))
+      .then(() => {
+        setAutoplayBlocked(false)
+        setMusicPlaying(true)
+      })
+      .catch(() => {
+        setAutoplayBlocked(true)
+        setMusicPlaying(false)
+      })
   }
 
   const stopMusic = () => {
     musicEnabledRef.current = false
-    resumeMusicAfterVideoRef.current = false
     audioRef.current?.pause()
     setMusicPlaying(false)
+    setAutoplayBlocked(false)
   }
 
   const toggleMusic = () => {
     const audio = audioRef.current
-    if (videoPlayingRef.current) {
-      const resume = !musicEnabledRef.current
-      musicEnabledRef.current = resume
-      resumeMusicAfterVideoRef.current = resume
-      return
-    }
-    if (musicPlaying || (audio && !audio.paused)) stopMusic()
+    if (musicEnabledRef.current && (musicPlaying || (audio && !audio.paused))) stopMusic()
     else startMusic()
-  }
-
-  const handleVideoPlay = () => {
-    if (videoPlayingRef.current) return
-    videoPlayingRef.current = true
-    setVideoPlaying(true)
-    const audio = audioRef.current
-    resumeMusicAfterVideoRef.current = musicEnabledRef.current
-    audio?.pause()
-    setMusicPlaying(false)
-  }
-
-  const handleVideoStop = () => {
-    if (!videoPlayingRef.current) return
-    videoPlayingRef.current = false
-    setVideoPlaying(false)
-    const shouldResume = resumeMusicAfterVideoRef.current && musicEnabledRef.current
-    resumeMusicAfterVideoRef.current = false
-    if (shouldResume) startMusic()
   }
 
   const changeMusicVolume = (value: number) => {
@@ -163,19 +138,33 @@ function App() {
     if (!audio) return
     audio.volume = musicVolumeRef.current
     const tryAutoplay = () => {
-      if (!musicEnabledRef.current || videoPlayingRef.current) return
+      if (!musicEnabledRef.current) return
       audio.volume = musicVolumeRef.current
       void audio.play()
-        .then(() => setMusicPlaying(true))
-        .catch(() => setMusicPlaying(false))
+        .then(() => {
+          setAutoplayBlocked(false)
+          setMusicPlaying(true)
+        })
+        .catch(() => {
+          setAutoplayBlocked(true)
+          setMusicPlaying(false)
+        })
     }
     tryAutoplay()
-    const unlockAudio = () => tryAutoplay()
+    const unlockAudio = (event: Event) => {
+      if (event.target instanceof Element && event.target.closest('.music-widget')) return
+      tryAutoplay()
+    }
+    const resumeWhenVisible = () => {
+      if (!document.hidden) tryAutoplay()
+    }
     window.addEventListener('pointerdown', unlockAudio, { once: true })
     window.addEventListener('keydown', unlockAudio, { once: true })
+    document.addEventListener('visibilitychange', resumeWhenVisible)
     return () => {
       window.removeEventListener('pointerdown', unlockAudio)
       window.removeEventListener('keydown', unlockAudio)
+      document.removeEventListener('visibilitychange', resumeWhenVisible)
     }
   }, [])
 
@@ -412,7 +401,7 @@ function App() {
             </motion.article>
             <motion.article className="photo-card photo-video-card">
               <div className="paired-video-preview">
-                <video controls playsInline preload="none" poster="/media/anh-nguyet/video-18-10-poster.webp" onPlay={handleVideoPlay} onPlaying={handleVideoPlay} onPause={handleVideoStop} onEnded={handleVideoStop}>
+                <video controls playsInline preload="none" poster="/media/anh-nguyet/video-18-10-poster.webp">
                   <source src={october18Video.src} type="video/mp4" />
                   Trình duyệt của bạn không hỗ trợ phát video này.
                 </video>
@@ -438,7 +427,7 @@ function App() {
         </div>
         {content.media.filter((item) => item.type === 'video' && item.caption !== '18/10').map((video) => (
           <motion.article className="video-card" key={video.src} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: 0.2 }} transition={{ duration: 0.55 }}>
-            <video controls playsInline preload="none" poster="/media/anh-nguyet/video-20-10-poster.webp" onPlay={handleVideoPlay} onPlaying={handleVideoPlay} onPause={handleVideoStop} onEnded={handleVideoStop}>
+            <video controls playsInline preload="none" poster="/media/anh-nguyet/video-20-10-poster.webp">
               <source src={video.src} type="video/mp4" />
               Trình duyệt của bạn không hỗ trợ phát video này.
             </video>
@@ -496,7 +485,7 @@ function App() {
       <aside className={`music-widget ${musicPlaying && musicVolume > 0 ? 'is-playing' : ''}`} aria-label="Điều khiển nhạc nền">
         <button className="music-toggle" type="button" onClick={toggleMusic} aria-pressed={musicPlaying}>
           <span className="music-visualizer" aria-hidden="true"><i /><i /><i /><i /></span>
-          <span>{videoPlaying ? 'Tạm dừng khi xem video' : musicPlaying ? 'Đang phát nhạc' : 'Bật nhạc nền'}</span>
+          <span>{musicPlaying ? 'Đang phát nhạc' : autoplayBlocked ? 'Chạm để bật nhạc' : 'Đang mở nhạc nền'}</span>
           {musicPlaying ? <Pause size={14} /> : <Music2 size={14} />}
         </button>
         <label className="music-volume-row">
