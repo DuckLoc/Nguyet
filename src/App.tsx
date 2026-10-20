@@ -301,7 +301,7 @@ function App() {
         {galleryError && <p className="gallery-error" role="alert">{galleryError}</p>}
         <div className="photo-grid">
             {galleryPhotos.map((photo, index) => (
-              <motion.article className={`photo-card ${photo.upload ? 'photo-card-upload' : ''}`} key={photo.id} initial={{ opacity: 0, y: 22, scale: 0.94, rotateY: index % 2 === 0 ? -10 : 10, rotateX: 5 }} whileInView={{ opacity: 1, y: 0, scale: 1, rotateY: 0, rotateX: 0 }} viewport={{ once: true, amount: 0.12 }} transition={{ duration: 0.62, delay: Math.min(index % 4, 3) * 0.07, ease: 'easeOut' }}>
+              <motion.article className={`photo-card ${photo.upload ? 'photo-card-upload' : ''}`} key={photo.id} initial={{ opacity: 0, y: 22, scale: 0.98 }} whileInView={{ opacity: 1, y: 0, scale: 1 }} viewport={{ once: true, amount: 0.12 }} transition={{ duration: 0.48, delay: Math.min(index % 4, 3) * 0.07, ease: 'easeOut' }}>
                 <button className="photo-preview" onClick={() => setActivePhoto(index)} aria-label={`Xem ảnh ${index + 1}`}>
                   <img src={photo.src} alt={photo.caption || `Ảnh ${index + 1}`} loading={index === 0 ? 'eager' : 'lazy'} decoding="async" /><span className="photo-zoom"><Camera size={18} /></span>
                 </button>
